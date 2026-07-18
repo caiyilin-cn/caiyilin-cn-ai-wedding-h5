@@ -3,149 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#fff8f3" />
-  <title>离谱结婚请帖生成器</title>
+  <meta name="theme-color" content="#f7f2ed" />
+  <title>婚礼请帖生成器</title>
   <link rel="stylesheet" href="./src/styles.css" />
   <script src="./src/app.js" defer></script>
 </head>
 <body>
-  <main class="app-shell">
-    <section class="hero">
-      <div class="hero-badge">ABSURD WEDDING LAB</div>
-      <h1>把任意两样东西，<br />送进婚姻殿堂。</h1>
-      <p>上传两张照片，可以是人、枕头、玩偶，甚至两只杯子。30 秒生成一套离谱又正式的结婚请帖。</p>
-      <div class="hero-tags">
-        <span>无需登录</span>
-        <span>照片不上传服务器</span>
-        <span>适合微信分享</span>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="brand-line">
+        <span class="brand-mark">W</span>
+        <span>WEDDING STUDIO</span>
       </div>
-    </section>
+      <p class="eyebrow">AI 婚礼请帖生成器</p>
+      <h1>上传两张照片，<br />生成一套婚礼请帖。</h1>
+      <p class="hero-copy">上传新郎与新娘照片，填写姓名和日期，即可生成请帖封面与 5 张婚礼视觉图。</p>
+      <div class="hero-note">
+        <span>无需登录</span>
+        <span>照片仅在本地处理</span>
+      </div>
+    </header>
 
-    <section class="panel" id="generatorPanel">
-      <div class="section-title">
+    <section class="creator-card" id="creatorCard">
+      <div class="step-heading">
         <span>01</span>
         <div>
-          <h2>先把两位主角请上场</h2>
-          <p>照片只在当前浏览器本地使用。</p>
+          <h2>上传新人照片</h2>
+          <p>建议选择清晰、正面或半身照片。</p>
         </div>
       </div>
 
       <div class="upload-grid">
-        <div class="upload-card" data-side="a">
-          <input id="photoA" type="file" accept="image/*" hidden />
-          <button class="upload-box" type="button" data-upload="a">
-            <div class="upload-placeholder" id="placeholderA">
-              <strong>＋</strong>
-              <span>上传对象 A</span>
-              <small>例如：枕头先生</small>
+        <div class="upload-item">
+          <input id="groomPhoto" type="file" accept="image/*" hidden />
+          <label class="upload-box" for="groomPhoto">
+            <div class="upload-placeholder" id="groomPlaceholder">
+              <div class="upload-icon">＋</div>
+              <strong>上传新郎照片</strong>
+              <small>点击选择手机相册</small>
             </div>
-            <img id="previewA" alt="对象 A 预览" hidden />
-          </button>
-          <button class="remove-btn" type="button" data-remove="a" hidden>删除并重选</button>
+            <img id="groomPreview" alt="新郎照片预览" hidden />
+          </label>
+          <button class="text-button" id="removeGroom" type="button" hidden>删除并重选</button>
         </div>
 
-        <div class="upload-card" data-side="b">
-          <input id="photoB" type="file" accept="image/*" hidden />
-          <button class="upload-box" type="button" data-upload="b">
-            <div class="upload-placeholder" id="placeholderB">
-              <strong>＋</strong>
-              <span>上传对象 B</span>
-              <small>例如：枕头小姐</small>
+        <div class="upload-item">
+          <input id="bridePhoto" type="file" accept="image/*" hidden />
+          <label class="upload-box" for="bridePhoto">
+            <div class="upload-placeholder" id="bridePlaceholder">
+              <div class="upload-icon">＋</div>
+              <strong>上传新娘照片</strong>
+              <small>点击选择手机相册</small>
             </div>
-            <img id="previewB" alt="对象 B 预览" hidden />
-          </button>
-          <button class="remove-btn" type="button" data-remove="b" hidden>删除并重选</button>
+            <img id="bridePreview" alt="新娘照片预览" hidden />
+          </label>
+          <button class="text-button" id="removeBride" type="button" hidden>删除并重选</button>
         </div>
       </div>
 
-      <div class="section-title form-title">
+      <div class="step-heading second-step">
         <span>02</span>
         <div>
-          <h2>补充结婚信息</h2>
-          <p>名字越离谱，成片越有节目效果。</p>
+          <h2>填写请帖信息</h2>
+          <p>信息会自动排版到最终成品中。</p>
         </div>
       </div>
 
       <div class="form-grid">
         <label>
-          <span>对象 A 名称</span>
-          <input id="nameA" type="text" maxlength="18" value="枕头先生" />
+          <span>新郎姓名</span>
+          <input id="groomName" type="text" maxlength="16" placeholder="请输入新郎姓名" />
         </label>
         <label>
-          <span>对象 B 名称</span>
-          <input id="nameB" type="text" maxlength="18" value="枕头小姐" />
+          <span>新娘姓名</span>
+          <input id="brideName" type="text" maxlength="16" placeholder="请输入新娘姓名" />
         </label>
-        <label class="full-width">
-          <span>结婚日期</span>
+        <label class="full-row">
+          <span>婚礼日期</span>
           <input id="weddingDate" type="date" />
         </label>
       </div>
 
-      <div class="style-block">
-        <span class="field-label">文案风格</span>
-        <div class="style-options" role="radiogroup" aria-label="文案风格">
-          <button type="button" class="style-chip active" data-style="romantic">正经浪漫</button>
-          <button type="button" class="style-chip" data-style="funny">沙雕搞笑</button>
-          <button type="button" class="style-chip" data-style="absurd">离谱抽象</button>
-          <button type="button" class="style-chip" data-style="announcement">朋友圈官宣</button>
+      <div class="style-section">
+        <span class="field-title">视觉风格</span>
+        <div class="style-switch" role="radiogroup" aria-label="视觉风格">
+          <button class="style-option active" type="button" data-style="editorial">杂志极简</button>
+          <button class="style-option" type="button" data-style="romantic">法式浪漫</button>
+          <button class="style-option" type="button" data-style="classic">中式典雅</button>
         </div>
       </div>
 
-      <button id="generateBtn" class="generate-btn" type="button">
-        <span>一键生成结婚请帖</span>
+      <button class="generate-button" id="generateButton" type="button">
+        <span>生成婚礼请帖</span>
         <b>→</b>
       </button>
-      <p class="error-message" id="errorMessage" aria-live="polite"></p>
+      <p class="form-error" id="formError" aria-live="polite"></p>
     </section>
 
-    <section class="loading-panel" id="loadingPanel" hidden>
-      <div class="loader-ring"><span>囍</span></div>
-      <h2>婚礼筹备中</h2>
-      <p id="loadingText">正在分析两个对象关系……</p>
-      <div class="loading-steps" id="loadingSteps"></div>
+    <section class="loading-card" id="loadingCard" hidden>
+      <div class="loading-symbol">囍</div>
+      <h2>正在生成婚礼视觉</h2>
+      <p id="loadingMessage">正在读取新人照片...</p>
+      <div class="loading-track"><span id="loadingBar"></span></div>
     </section>
 
-    <section class="result-section" id="resultSection" hidden>
-      <div class="result-topbar">
+    <section class="result-wrap" id="resultWrap" hidden>
+      <div class="result-header">
         <div>
-          <span>生成完成</span>
-          <h2>你们的离谱婚礼正式开席</h2>
+          <p class="eyebrow">YOUR WEDDING VISUALS</p>
+          <h2>请帖已经生成</h2>
         </div>
-        <button id="restartBtn" type="button">重新生成</button>
+        <button id="editAgain" type="button">重新编辑</button>
       </div>
 
-      <article class="invite-card" id="inviteCard">
-        <div class="invite-decor invite-decor-left">✦</div>
-        <div class="invite-decor invite-decor-right">✦</div>
-        <p class="invite-kicker">WEDDING ANNOUNCEMENT</p>
-        <h2 id="inviteNames">枕头先生 & 枕头小姐</h2>
-        <p class="invite-date" id="inviteDate">2026年8月18日</p>
-        <div class="invite-photo-wrap">
-          <figure class="invite-photo invite-photo-a"><img id="invitePhotoA" alt="对象 A" /></figure>
-          <div class="invite-heart">♥</div>
-          <figure class="invite-photo invite-photo-b"><img id="invitePhotoB" alt="对象 B" /></figure>
+      <article class="invite-preview">
+        <div class="invite-topline">WEDDING INVITATION</div>
+        <h2 id="resultNames">新郎 & 新娘</h2>
+        <p id="resultDate">2026.10.18</p>
+        <div class="portrait-stage">
+          <figure class="portrait portrait-left"><img id="resultGroom" alt="新郎" /></figure>
+          <div class="ampersand">&</div>
+          <figure class="portrait portrait-right"><img id="resultBride" alt="新娘" /></figure>
         </div>
-        <h3 id="inviteHeadline">从此以后，夜夜相伴。</h3>
-        <p id="inviteCopy">他们决定把彼此写进接下来的每一个夜晚。</p>
-        <div class="invite-seal">喜</div>
+        <p class="invite-line" id="resultLine">诚邀您见证我们的幸福时刻</p>
+        <div class="seal">囍</div>
       </article>
 
-      <div class="gallery-heading">
-        <span>5 张婚礼写真</span>
-        <p>保留原始照片，用不同婚礼场景和排版完成一套视觉合成。</p>
+      <div class="gallery-title">
+        <h3>为你生成的 5 张婚礼视觉</h3>
+        <p>由上传照片在浏览器中完成自动排版与合成。</p>
       </div>
 
-      <div class="wedding-gallery" id="weddingGallery"></div>
+      <div class="generated-grid" id="generatedGrid"></div>
 
-      <div class="copy-card">
-        <span>自动生成文案</span>
-        <p id="shareCopy"></p>
-        <button id="copyBtn" type="button">复制分享文案</button>
+      <div class="share-card">
+        <span>请帖文案</span>
+        <p id="shareText"></p>
+        <button id="copyText" type="button">复制请帖文案</button>
       </div>
     </section>
 
     <footer>
-      <p>本项目仅供娱乐。请确保你拥有所上传照片的使用权。</p>
+      <p>请确认拥有所上传照片的使用权。</p>
     </footer>
   </main>
 </body>
