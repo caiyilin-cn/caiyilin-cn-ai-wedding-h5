@@ -1,1 +1,152 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" /><title>AI 婚礼视觉生成工具</title><link rel="stylesheet" href="./src/styles.css"></head><body><main id="app" class="phone"></main><script src="./src/app.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8f3" />
+  <title>离谱结婚请帖生成器</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+  <script src="./src/app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-badge">ABSURD WEDDING LAB</div>
+      <h1>把任意两样东西，<br />送进婚姻殿堂。</h1>
+      <p>上传两张照片，可以是人、枕头、玩偶，甚至两只杯子。30 秒生成一套离谱又正式的结婚请帖。</p>
+      <div class="hero-tags">
+        <span>无需登录</span>
+        <span>照片不上传服务器</span>
+        <span>适合微信分享</span>
+      </div>
+    </section>
+
+    <section class="panel" id="generatorPanel">
+      <div class="section-title">
+        <span>01</span>
+        <div>
+          <h2>先把两位主角请上场</h2>
+          <p>照片只在当前浏览器本地使用。</p>
+        </div>
+      </div>
+
+      <div class="upload-grid">
+        <div class="upload-card" data-side="a">
+          <input id="photoA" type="file" accept="image/*" hidden />
+          <button class="upload-box" type="button" data-upload="a">
+            <div class="upload-placeholder" id="placeholderA">
+              <strong>＋</strong>
+              <span>上传对象 A</span>
+              <small>例如：枕头先生</small>
+            </div>
+            <img id="previewA" alt="对象 A 预览" hidden />
+          </button>
+          <button class="remove-btn" type="button" data-remove="a" hidden>删除并重选</button>
+        </div>
+
+        <div class="upload-card" data-side="b">
+          <input id="photoB" type="file" accept="image/*" hidden />
+          <button class="upload-box" type="button" data-upload="b">
+            <div class="upload-placeholder" id="placeholderB">
+              <strong>＋</strong>
+              <span>上传对象 B</span>
+              <small>例如：枕头小姐</small>
+            </div>
+            <img id="previewB" alt="对象 B 预览" hidden />
+          </button>
+          <button class="remove-btn" type="button" data-remove="b" hidden>删除并重选</button>
+        </div>
+      </div>
+
+      <div class="section-title form-title">
+        <span>02</span>
+        <div>
+          <h2>补充结婚信息</h2>
+          <p>名字越离谱，成片越有节目效果。</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          <span>对象 A 名称</span>
+          <input id="nameA" type="text" maxlength="18" value="枕头先生" />
+        </label>
+        <label>
+          <span>对象 B 名称</span>
+          <input id="nameB" type="text" maxlength="18" value="枕头小姐" />
+        </label>
+        <label class="full-width">
+          <span>结婚日期</span>
+          <input id="weddingDate" type="date" />
+        </label>
+      </div>
+
+      <div class="style-block">
+        <span class="field-label">文案风格</span>
+        <div class="style-options" role="radiogroup" aria-label="文案风格">
+          <button type="button" class="style-chip active" data-style="romantic">正经浪漫</button>
+          <button type="button" class="style-chip" data-style="funny">沙雕搞笑</button>
+          <button type="button" class="style-chip" data-style="absurd">离谱抽象</button>
+          <button type="button" class="style-chip" data-style="announcement">朋友圈官宣</button>
+        </div>
+      </div>
+
+      <button id="generateBtn" class="generate-btn" type="button">
+        <span>一键生成结婚请帖</span>
+        <b>→</b>
+      </button>
+      <p class="error-message" id="errorMessage" aria-live="polite"></p>
+    </section>
+
+    <section class="loading-panel" id="loadingPanel" hidden>
+      <div class="loader-ring"><span>囍</span></div>
+      <h2>婚礼筹备中</h2>
+      <p id="loadingText">正在分析两个对象关系……</p>
+      <div class="loading-steps" id="loadingSteps"></div>
+    </section>
+
+    <section class="result-section" id="resultSection" hidden>
+      <div class="result-topbar">
+        <div>
+          <span>生成完成</span>
+          <h2>你们的离谱婚礼正式开席</h2>
+        </div>
+        <button id="restartBtn" type="button">重新生成</button>
+      </div>
+
+      <article class="invite-card" id="inviteCard">
+        <div class="invite-decor invite-decor-left">✦</div>
+        <div class="invite-decor invite-decor-right">✦</div>
+        <p class="invite-kicker">WEDDING ANNOUNCEMENT</p>
+        <h2 id="inviteNames">枕头先生 & 枕头小姐</h2>
+        <p class="invite-date" id="inviteDate">2026年8月18日</p>
+        <div class="invite-photo-wrap">
+          <figure class="invite-photo invite-photo-a"><img id="invitePhotoA" alt="对象 A" /></figure>
+          <div class="invite-heart">♥</div>
+          <figure class="invite-photo invite-photo-b"><img id="invitePhotoB" alt="对象 B" /></figure>
+        </div>
+        <h3 id="inviteHeadline">从此以后，夜夜相伴。</h3>
+        <p id="inviteCopy">他们决定把彼此写进接下来的每一个夜晚。</p>
+        <div class="invite-seal">喜</div>
+      </article>
+
+      <div class="gallery-heading">
+        <span>5 张婚礼写真</span>
+        <p>保留原始照片，用不同婚礼场景和排版完成一套视觉合成。</p>
+      </div>
+
+      <div class="wedding-gallery" id="weddingGallery"></div>
+
+      <div class="copy-card">
+        <span>自动生成文案</span>
+        <p id="shareCopy"></p>
+        <button id="copyBtn" type="button">复制分享文案</button>
+      </div>
+    </section>
+
+    <footer>
+      <p>本项目仅供娱乐。请确保你拥有所上传照片的使用权。</p>
+    </footer>
+  </main>
+</body>
+</html>
