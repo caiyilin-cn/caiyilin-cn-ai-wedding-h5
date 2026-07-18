@@ -1,24 +1,376 @@
-const I={cover:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80',couple:'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80',bride:'https://images.unsplash.com/photo-1525258946800-98cfd641d0de?auto=format&fit=crop&w=900&q=80',groom:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80',story:'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?auto=format&fit=crop&w=1200&q=80',poster:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80',hotel:'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=80'};
-let state={page:'home',mode:'couple',groom:'陆一辰',bride:'林知夏',date:'2026年10月18日 星期日 17:30',hotel:'杭州湖畔白鹭酒店 · 湖景宴会厅',invite:'诚邀你见证我们人生中最温柔的一次奔赴。',story:'我们相识于一场迟到的春雨，从一起撑伞到一起规划未来。那些平凡日子里的晚风、咖啡和散步，都慢慢变成了想与你共度一生的答案。',guests:[],wishes:[],photos:{}};
-const titles={mode:'选择制作方式',upload:'上传照片',identity:'确认人物身份',style:'选择婚礼风格',progress:'AI 生成中',result:'婚礼视觉包',info:'填写婚礼信息',story:'爱情故事',invite:'请帖预览',rsvp:'宾客回执',wishes:'祝福留言',admin:'项目管理'};
-const $=s=>document.querySelector(s), nav=p=>{state.page=p;scrollTo(0,0);render()};
-const app=document.getElementById('app');
-function top(){return state.page==='home'?'':`<div class="top"><button onclick="nav('home')">←</button><b>${titles[state.page]}</b><button onclick="nav('admin')">☰</button></div>`}
-function hero(src,inner){return `<div class="heroImg" style="background-image:linear-gradient(180deg,rgba(36,27,24,.08),rgba(36,27,24,.52)),url(${src})">${inner}</div>`}
-function home(){return `${hero(I.cover,`<span class="pill">AI Wedding Visual Studio</span><h1>几张照片，生成属于你们的整套婚礼视觉</h1><p>上传婚纱照，或者上传两个人的普通照片，自动生成婚礼合照、请帖封面、爱情故事配图和朋友圈邀请海报。</p>`)}<div class="content"><button class="primary" onclick="nav('mode')">开始制作</button><button class="secondary" onclick="nav('invite')">查看示例</button><div class="grid"><div><b>✦ 不是模板编辑器</b><p>围绕新人照片自动延展统一视觉。</p></div><div><b>◌ 两种照片入口</b><p>婚纱照优选，或普通照片生成合照。</p></div></div></div>`}
-function mode(){return `<div class="content"><h2>你想从哪种照片开始？</h2>${[['wedding','上传已有婚纱照','自动挑选适合封面、故事和海报的照片。'],['couple','上传两个人普通照片','模拟生成统一风格婚礼合照与视觉包。']].map(x=>`<button class="choice" onclick="state.mode='${x[0]}';nav('upload')"><span><b>${x[1]}</b><small>${x[2]}</small></span><i>›</i></button>`).join('')}</div>`}
-function uploadBox(key,label){return `<div class="upload"><input id="f-${key}" type="file" accept="image/*" onchange="pick('${key}',this)"><div class="preview" onclick="$('#f-${key}').click()">${state.photos[key]?`<img src="${state.photos[key]}">`:`<span class="plus">＋</span><span>${label}</span>`}</div>${state.photos[key]?`<button class="ghost" onclick="state.photos['${key}']='';render()">删除并重选</button>`:''}</div>`}
-function pick(key,input){const f=input.files[0];if(f){state.photos[key]=URL.createObjectURL(f);render()}}
-function upload(){return `<div class="content"><h2>${state.mode==='wedding'?'上传婚纱照':'分别上传新郎、新娘照片'}</h2><p class="muted">原型使用本地预览，不会上传到服务器。</p>${state.mode==='wedding'?uploadBox('wedding','选择婚纱照'):uploadBox('groom','新郎个人照')+uploadBox('bride','新娘个人照')}<div class="bottom"><button class="primary" onclick="nav('identity')">下一步：确认身份</button></div></div>`}
-function identity(){return `<div class="content"><h2>确认新人信息</h2><div class="people"><img src="${state.photos.groom||I.groom}"><img src="${state.photos.bride||I.bride}"></div><input value="${state.groom}" oninput="state.groom=this.value"><input value="${state.bride}" oninput="state.bride=this.value"><div class="bottom"><button class="primary" onclick="nav('style')">选择风格</button></div></div>`}
-function style(){return `<div class="content"><h2>选择视觉风格</h2>${['暖白纪实','湖畔胶片','法式花园','极简杂志'].map((s,i)=>`<button class="style" onclick="nav('progress')"><img src="${[I.couple,I.story,I.poster,I.hotel][i]}"><b>${s}</b><span>✓</span></button>`).join('')}</div>`}
-function progress(){return `<div class="content center"><div class="spark">✦</div><h2>正在生成你们的婚礼视觉包</h2>${['分析人物与照片光线','生成双人主视觉','延展请帖封面与海报','整理微信分享素材'].map(s=>`<p class="step">✓ ${s}</p>`).join('')}<button class="primary" onclick="nav('result')">查看生成结果</button></div>`}
-function result(){let items=['婚礼H5首屏封面','新人双人主视觉','爱情故事配图','朋友圈竖版邀请海报','微信分享封面','婚礼倒计时海报'];return `<div class="content"><h2>已生成 6 组视觉素材</h2><div class="assets">${items.map((it,i)=>`<div><img src="${[I.cover,I.couple,I.story,I.poster,I.couple,I.hotel][i]}"><b>${it}</b></div>`).join('')}</div><div class="bottom"><button class="primary" onclick="nav('info')">继续填写请帖</button></div></div>`}
-function info(){return `<div class="content"><h2>婚礼信息</h2><textarea oninput="state.date=this.value">${state.date}</textarea><textarea oninput="state.hotel=this.value">${state.hotel}</textarea><textarea oninput="state.invite=this.value">${state.invite}</textarea><div class="bottom"><button class="primary" onclick="nav('story')">填写爱情故事</button></div></div>`}
-function story(){return `<div class="content"><h2>爱情故事</h2><textarea class="big" oninput="state.story=this.value">${state.story}</textarea><button class="secondary" onclick="state.story+=' AI 已将故事润色为更适合请帖的温柔语气。';render()">AI 润色生成</button><div class="bottom"><button class="primary" onclick="nav('invite')">预览请帖</button></div></div>`}
-function invite(){return `${hero(I.couple,`<h1>${state.groom} & ${state.bride}</h1><p>${state.date}</p>`)}<div class="content"><h2>${state.invite}</h2><p>${state.story}</p><img class="wide" src="${I.story}"><h3>⌖ ${state.hotel}</h3><button class="secondary">地图导航</button><button class="primary" onclick="nav('rsvp')">宾客回执入口</button><button class="secondary" onclick="nav('wishes')">祝福留言入口</button><button class="ghost" onclick="nav('admin')">进入新人项目管理后台</button></div>`}
-function rsvp(){return `<div class="content"><h2>宾客回执</h2><input id="guest" placeholder="你的姓名"><button class="primary" onclick="state.guests.push($('#guest').value||'一位好友');nav('invite')">确认参加</button></div>`}
-function wishes(){return `<div class="content"><h2>留下祝福</h2><textarea id="wish" placeholder="写给新人的祝福"></textarea><button class="primary" onclick="state.wishes.push($('#wish').value||'新婚快乐，永远幸福！');nav('invite')">提交祝福</button></div>`}
-function admin(){return `<div class="content"><h2>新人项目管理后台</h2><div class="panel"><b>请帖状态</b><p>视觉包已生成 · 请帖可分享</p><p>回执 ${state.guests.length} 人 · 祝福 ${state.wishes.length} 条</p></div><button class="primary" onclick="nav('invite')">预览请帖</button><button class="secondary" onclick="nav('result')">查看视觉包</button></div>`}
-function render(){if(!app)return;app.innerHTML=top()+({home,mode,upload,identity,style,progress,result,info,story,invite,rsvp,wishes,admin}[state.page]())}
-render();
+document.addEventListener('DOMContentLoaded', () => {
+  const state = {
+    groomPhoto: '',
+    bridePhoto: '',
+    style: 'editorial'
+  };
+
+  const el = {
+    groomInput: document.getElementById('groomPhoto'),
+    brideInput: document.getElementById('bridePhoto'),
+    groomPreview: document.getElementById('groomPreview'),
+    bridePreview: document.getElementById('bridePreview'),
+    groomPlaceholder: document.getElementById('groomPlaceholder'),
+    bridePlaceholder: document.getElementById('bridePlaceholder'),
+    removeGroom: document.getElementById('removeGroom'),
+    removeBride: document.getElementById('removeBride'),
+    groomName: document.getElementById('groomName'),
+    brideName: document.getElementById('brideName'),
+    weddingDate: document.getElementById('weddingDate'),
+    styleButtons: [...document.querySelectorAll('.style-option')],
+    generateButton: document.getElementById('generateButton'),
+    formError: document.getElementById('formError'),
+    creatorCard: document.getElementById('creatorCard'),
+    loadingCard: document.getElementById('loadingCard'),
+    loadingMessage: document.getElementById('loadingMessage'),
+    loadingBar: document.getElementById('loadingBar'),
+    resultWrap: document.getElementById('resultWrap'),
+    resultNames: document.getElementById('resultNames'),
+    resultDate: document.getElementById('resultDate'),
+    resultGroom: document.getElementById('resultGroom'),
+    resultBride: document.getElementById('resultBride'),
+    resultLine: document.getElementById('resultLine'),
+    generatedGrid: document.getElementById('generatedGrid'),
+    shareText: document.getElementById('shareText'),
+    copyText: document.getElementById('copyText'),
+    editAgain: document.getElementById('editAgain')
+  };
+
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() + 30);
+  el.weddingDate.value = defaultDate.toISOString().slice(0, 10);
+
+  function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith('image/')) {
+        reject(new Error('请选择图片文件'));
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        reject(new Error('图片不能超过 15MB'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('图片读取失败，请重新选择'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handlePhoto(side, file) {
+    try {
+      el.formError.textContent = '';
+      const dataUrl = await fileToDataURL(file);
+      const isGroom = side === 'groom';
+      state[isGroom ? 'groomPhoto' : 'bridePhoto'] = dataUrl;
+      const preview = isGroom ? el.groomPreview : el.bridePreview;
+      const placeholder = isGroom ? el.groomPlaceholder : el.bridePlaceholder;
+      const removeButton = isGroom ? el.removeGroom : el.removeBride;
+      preview.src = dataUrl;
+      preview.hidden = false;
+      placeholder.hidden = true;
+      removeButton.hidden = false;
+    } catch (error) {
+      el.formError.textContent = error.message;
+    }
+  }
+
+  function clearPhoto(side) {
+    const isGroom = side === 'groom';
+    state[isGroom ? 'groomPhoto' : 'bridePhoto'] = '';
+    const input = isGroom ? el.groomInput : el.brideInput;
+    const preview = isGroom ? el.groomPreview : el.bridePreview;
+    const placeholder = isGroom ? el.groomPlaceholder : el.bridePlaceholder;
+    const removeButton = isGroom ? el.removeGroom : el.removeBride;
+    input.value = '';
+    preview.src = '';
+    preview.hidden = true;
+    placeholder.hidden = false;
+    removeButton.hidden = true;
+  }
+
+  el.groomInput.addEventListener('change', event => handlePhoto('groom', event.target.files[0]));
+  el.brideInput.addEventListener('change', event => handlePhoto('bride', event.target.files[0]));
+  el.removeGroom.addEventListener('click', () => clearPhoto('groom'));
+  el.removeBride.addEventListener('click', () => clearPhoto('bride'));
+
+  el.styleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      state.style = button.dataset.style;
+      el.styleButtons.forEach(item => item.classList.toggle('active', item === button));
+    });
+  });
+
+  function formatDate(value) {
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  function styleText(style) {
+    return {
+      editorial: {
+        line: '诚邀您见证我们的幸福时刻',
+        share: '我们决定，把往后的日子写成同一个名字。诚邀你见证这场属于我们的婚礼。'
+      },
+      romantic: {
+        line: '从初见心动，到余生同行',
+        share: '故事从一次相遇开始，也将在无数个平凡日子里继续。诚邀你见证我们的幸福时刻。'
+      },
+      classic: {
+        line: '两姓联姻，一堂缔约',
+        share: '良辰已定，佳期将至。敬备喜宴，恭请莅临，共同见证我们的新婚之喜。'
+      }
+    }[style];
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('图片加载失败'));
+      image.src = src;
+    });
+  }
+
+  function roundedRect(ctx, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+  }
+
+  function drawCoverImage(ctx, image, x, y, width, height, radius = 0) {
+    const scale = Math.max(width / image.width, height / image.height);
+    const drawWidth = image.width * scale;
+    const drawHeight = image.height * scale;
+    const drawX = x + (width - drawWidth) / 2;
+    const drawY = y + (height - drawHeight) / 2;
+    ctx.save();
+    if (radius > 0) {
+      roundedRect(ctx, x, y, width, height, radius);
+      ctx.clip();
+    }
+    ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+    ctx.restore();
+  }
+
+  function drawCenteredText(ctx, text, y, font, color) {
+    ctx.save();
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.fillText(text, 450, y);
+    ctx.restore();
+  }
+
+  async function makePoster(index, groomName, brideName, dateText) {
+    const [groomImage, brideImage] = await Promise.all([
+      loadImage(state.groomPhoto),
+      loadImage(state.bridePhoto)
+    ]);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 900;
+    canvas.height = 1200;
+    const ctx = canvas.getContext('2d');
+
+    const palettes = {
+      editorial: ['#f4efe9', '#2b2220', '#8f3d4f'],
+      romantic: ['#f7ecee', '#5a3640', '#c48394'],
+      classic: ['#f6efe2', '#5b251f', '#a7352c']
+    };
+    const [background, ink, accent] = palettes[state.style];
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, 900, 1200);
+
+    if (index === 0) {
+      drawCenteredText(ctx, 'WEDDING PORTRAIT', 90, '24px Georgia', accent);
+      drawCoverImage(ctx, groomImage, 70, 160, 350, 720, 24);
+      drawCoverImage(ctx, brideImage, 480, 160, 350, 720, 24);
+      drawCenteredText(ctx, `${groomName}  &  ${brideName}`, 980, '54px Georgia, serif', ink);
+      drawCenteredText(ctx, dateText, 1045, '28px Arial', accent);
+      drawCenteredText(ctx, 'THE BEGINNING OF FOREVER', 1120, '20px Georgia', ink);
+    }
+
+    if (index === 1) {
+      const gradient = ctx.createLinearGradient(0, 0, 900, 1200);
+      gradient.addColorStop(0, '#d9b9c0');
+      gradient.addColorStop(1, '#7d4050');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 900, 1200);
+      ctx.globalAlpha = 0.92;
+      drawCoverImage(ctx, groomImage, 90, 200, 420, 680, 210);
+      drawCoverImage(ctx, brideImage, 390, 320, 420, 680, 210);
+      ctx.globalAlpha = 1;
+      drawCenteredText(ctx, 'LOVE IN BLOOM', 1080, '52px Georgia', '#fffaf7');
+      drawCenteredText(ctx, `${groomName} × ${brideName}`, 1140, '24px Arial', '#fffaf7');
+    }
+
+    if (index === 2) {
+      ctx.fillStyle = ink;
+      ctx.fillRect(0, 0, 900, 250);
+      drawCenteredText(ctx, 'JUST MARRIED', 135, '56px Georgia', '#ffffff');
+      drawCoverImage(ctx, groomImage, 60, 315, 360, 610, 16);
+      drawCoverImage(ctx, brideImage, 480, 315, 360, 610, 16);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(110, 1010, 680, 110);
+      drawCenteredText(ctx, dateText, 1080, '34px Arial', ink);
+    }
+
+    if (index === 3) {
+      drawCoverImage(ctx, groomImage, 0, 0, 450, 1200);
+      drawCoverImage(ctx, brideImage, 450, 0, 450, 1200);
+      const overlay = ctx.createLinearGradient(0, 520, 0, 1200);
+      overlay.addColorStop(0, 'rgba(0,0,0,0)');
+      overlay.addColorStop(1, 'rgba(0,0,0,.72)');
+      ctx.fillStyle = overlay;
+      ctx.fillRect(0, 420, 900, 780);
+      drawCenteredText(ctx, 'OUR WEDDING DAY', 950, '30px Georgia', '#ffffff');
+      drawCenteredText(ctx, `${groomName} & ${brideName}`, 1035, '58px Georgia', '#ffffff');
+      drawCenteredText(ctx, dateText, 1110, '25px Arial', '#ffffff');
+    }
+
+    if (index === 4) {
+      ctx.fillStyle = accent;
+      ctx.fillRect(0, 0, 900, 1200);
+      drawCenteredText(ctx, 'SAVE THE DATE', 100, '30px Georgia', '#ffffff');
+      drawCoverImage(ctx, groomImage, 80, 190, 330, 600, 170);
+      drawCoverImage(ctx, brideImage, 490, 190, 330, 600, 170);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(450, 490, 42, 0, Math.PI * 2);
+      ctx.stroke();
+      drawCenteredText(ctx, '&', 510, '54px Georgia', '#ffffff');
+      drawCenteredText(ctx, `${groomName}  /  ${brideName}`, 910, '48px Georgia', '#ffffff');
+      drawCenteredText(ctx, dateText, 985, '26px Arial', '#ffffff');
+      drawCenteredText(ctx, '诚邀您见证我们的幸福时刻', 1080, '26px sans-serif', '#ffffff');
+    }
+
+    return canvas.toDataURL('image/jpeg', 0.9);
+  }
+
+  async function renderResults() {
+    const groomName = el.groomName.value.trim();
+    const brideName = el.brideName.value.trim();
+    const dateText = formatDate(el.weddingDate.value);
+    const copy = styleText(state.style);
+
+    el.resultNames.textContent = `${groomName} & ${brideName}`;
+    el.resultDate.textContent = dateText;
+    el.resultGroom.src = state.groomPhoto;
+    el.resultBride.src = state.bridePhoto;
+    el.resultLine.textContent = copy.line;
+    el.shareText.textContent = `${groomName}与${brideName}将于${dateText}举行婚礼。${copy.share}`;
+
+    const titles = ['双人主视觉', '法式浪漫写真', '杂志登记照', '婚礼现场海报', '朋友圈官宣图'];
+    el.generatedGrid.innerHTML = '';
+
+    for (let index = 0; index < titles.length; index += 1) {
+      const imageUrl = await makePoster(index, groomName, brideName, dateText);
+      const item = document.createElement('article');
+      item.className = 'generated-item';
+      item.innerHTML = `
+        <img src="${imageUrl}" alt="${titles[index]}" />
+        <div class="generated-meta">
+          <strong>${String(index + 1).padStart(2, '0')} · ${titles[index]}</strong>
+          <button type="button">保存图片</button>
+        </div>
+      `;
+      item.querySelector('button').addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `婚礼视觉-${index + 1}.jpg`;
+        link.click();
+      });
+      el.generatedGrid.appendChild(item);
+    }
+  }
+
+  async function startGeneration() {
+    el.formError.textContent = '';
+    const groomName = el.groomName.value.trim();
+    const brideName = el.brideName.value.trim();
+
+    if (!state.groomPhoto || !state.bridePhoto) {
+      el.formError.textContent = '请先上传新郎和新娘照片';
+      return;
+    }
+    if (!groomName || !brideName) {
+      el.formError.textContent = '请填写新郎和新娘姓名';
+      return;
+    }
+    if (!el.weddingDate.value) {
+      el.formError.textContent = '请选择婚礼日期';
+      return;
+    }
+
+    el.generateButton.disabled = true;
+    el.creatorCard.hidden = true;
+    el.resultWrap.hidden = true;
+    el.loadingCard.hidden = false;
+    el.loadingBar.style.width = '10%';
+    el.loadingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const steps = [
+      ['正在读取新人照片...', '25%'],
+      ['正在生成婚礼主视觉...', '50%'],
+      ['正在排版五张婚礼写真...', '75%'],
+      ['正在整理请帖文案...', '92%']
+    ];
+
+    for (const [message, progress] of steps) {
+      el.loadingMessage.textContent = message;
+      el.loadingBar.style.width = progress;
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    try {
+      await renderResults();
+      el.loadingBar.style.width = '100%';
+      await new Promise(resolve => setTimeout(resolve, 250));
+      el.loadingCard.hidden = true;
+      el.resultWrap.hidden = false;
+      el.resultWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      el.loadingCard.hidden = true;
+      el.creatorCard.hidden = false;
+      el.formError.textContent = '生成失败，请重新选择照片后再试';
+    } finally {
+      el.generateButton.disabled = false;
+    }
+  }
+
+  el.generateButton.addEventListener('click', startGeneration);
+
+  el.editAgain.addEventListener('click', () => {
+    el.resultWrap.hidden = true;
+    el.creatorCard.hidden = false;
+    el.creatorCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  el.copyText.addEventListener('click', async () => {
+    const text = el.shareText.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      el.copyText.textContent = '已复制';
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+      el.copyText.textContent = '已复制';
+    }
+    setTimeout(() => {
+      el.copyText.textContent = '复制请帖文案';
+    }, 1500);
+  });
+});
