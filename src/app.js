@@ -2,6 +2,7 @@ const I={cover:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?aut
 let state={page:'home',mode:'couple',groom:'陆一辰',bride:'林知夏',date:'2026年10月18日 星期日 17:30',hotel:'杭州湖畔白鹭酒店 · 湖景宴会厅',invite:'诚邀你见证我们人生中最温柔的一次奔赴。',story:'我们相识于一场迟到的春雨，从一起撑伞到一起规划未来。那些平凡日子里的晚风、咖啡和散步，都慢慢变成了想与你共度一生的答案。',guests:[],wishes:[],photos:{}};
 const titles={mode:'选择制作方式',upload:'上传照片',identity:'确认人物身份',style:'选择婚礼风格',progress:'AI 生成中',result:'婚礼视觉包',info:'填写婚礼信息',story:'爱情故事',invite:'请帖预览',rsvp:'宾客回执',wishes:'祝福留言',admin:'项目管理'};
 const $=s=>document.querySelector(s), nav=p=>{state.page=p;scrollTo(0,0);render()};
+const app=document.getElementById('app');
 function top(){return state.page==='home'?'':`<div class="top"><button onclick="nav('home')">←</button><b>${titles[state.page]}</b><button onclick="nav('admin')">☰</button></div>`}
 function hero(src,inner){return `<div class="heroImg" style="background-image:linear-gradient(180deg,rgba(36,27,24,.08),rgba(36,27,24,.52)),url(${src})">${inner}</div>`}
 function home(){return `${hero(I.cover,`<span class="pill">AI Wedding Visual Studio</span><h1>几张照片，生成属于你们的整套婚礼视觉</h1><p>上传婚纱照，或者上传两个人的普通照片，自动生成婚礼合照、请帖封面、爱情故事配图和朋友圈邀请海报。</p>`)}<div class="content"><button class="primary" onclick="nav('mode')">开始制作</button><button class="secondary" onclick="nav('invite')">查看示例</button><div class="grid"><div><b>✦ 不是模板编辑器</b><p>围绕新人照片自动延展统一视觉。</p></div><div><b>◌ 两种照片入口</b><p>婚纱照优选，或普通照片生成合照。</p></div></div></div>`}
@@ -19,5 +20,5 @@ function invite(){return `${hero(I.couple,`<h1>${state.groom} & ${state.bride}</
 function rsvp(){return `<div class="content"><h2>宾客回执</h2><input id="guest" placeholder="你的姓名"><button class="primary" onclick="state.guests.push($('#guest').value||'一位好友');nav('invite')">确认参加</button></div>`}
 function wishes(){return `<div class="content"><h2>留下祝福</h2><textarea id="wish" placeholder="写给新人的祝福"></textarea><button class="primary" onclick="state.wishes.push($('#wish').value||'新婚快乐，永远幸福！');nav('invite')">提交祝福</button></div>`}
 function admin(){return `<div class="content"><h2>新人项目管理后台</h2><div class="panel"><b>请帖状态</b><p>视觉包已生成 · 请帖可分享</p><p>回执 ${state.guests.length} 人 · 祝福 ${state.wishes.length} 条</p></div><button class="primary" onclick="nav('invite')">预览请帖</button><button class="secondary" onclick="nav('result')">查看视觉包</button></div>`}
-function render(){app.innerHTML=top()+({home,mode,upload,identity,style,progress,result,info,story,invite,rsvp,wishes,admin}[state.page]())}
+function render(){if(!app)return;app.innerHTML=top()+({home,mode,upload,identity,style,progress,result,info,story,invite,rsvp,wishes,admin}[state.page]())}
 render();
